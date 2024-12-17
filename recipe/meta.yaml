@@ -6,27 +6,29 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   sha256: b0285338129efd5538e2d9a715ed435f979f6b1ae33aad068f34e7e83e6b4313
 
 build:
   noarch: python
-  number: 0
-  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed --verbose"
+  number: 1
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   host:
-    - python
-    - pip >=18.1
+    - python {{ python_min }}
+    - pip
+    - setuptools
+  run:
+    - python >={{ python_min }}
     - six >=1.11.0
     - click >=6.0
     - requests >=2.18.4
-  run:
-    - six
-    - click
-    - requests
 
 test:
+  requires:
+    - python {{ python_min }}
+    - pip
   imports:
     - atlasclient
     - atlasclient.base
@@ -35,13 +37,15 @@ test:
     - atlasclient.exceptions
     - atlasclient.models
     - atlasclient.utils
+  commands:
+    - pip check
 
 about:
   home: https://github.com/jpoullet2000/atlasclient
-  license: Apache 2.0
-  license_family: APACHE
+  license: Apache-2.0
+  license_family: Apache
   license_file: LICENSE
-  summary: 'Apache Atlas client in Python'
+  summary: Apache Atlas client in Python
   description: |
     **Apache Atlas client in Python**
 
@@ -63,3 +67,4 @@ about:
 extra:
   recipe-maintainers:
     - BrentDorsey
+    - xylar
